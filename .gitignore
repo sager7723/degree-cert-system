@@ -1,0 +1,53 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+*.key
+*.pem
+*.crt
+*.db
+*.sqlite*
+reports/*
+!reports/.gitkeep
+instance/*
+!instance/.gitkeep
+config/*.yml
+config/*.yaml
+contracts/**/build/
+
+# 本机环境
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+
+# 身份、账号及数据库
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.db
+*.db-*
+*.sqlite*
+instance/*
+!instance/.gitkeep
+
+# 本机配置和运行报告
+config/*.yml
+config/*.yaml
+!config/sdk-stage03.yml
+reports/*
+!reports/.gitkeep
+*.log
+
+# 构建产物及备份
+contracts/**/build/
+contracts/**/build-*/
+contracts/**/latest-build.txt
+*.zip
+*.7z
+*.tar
+*.tar.gz

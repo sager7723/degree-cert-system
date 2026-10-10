@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from '_search.html' import certificate_search %}
+{% block title %}工作台{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">工作台 / OVERVIEW</span><h1>{{ g.user.display_name }}，欢迎回来</h1><p>在这里管理证书，查看凭证，完成每一次真实核验。</p></div><span class="subtle-label">当前身份 · {{ role_labels.get(g.user.role, g.user.role) }}</span></section>
+<div class="overview-banner"><div><span class="eyebrow light">可信学历 · 链上留痕</span><h2>{% if g.user.role == 'uni' %}为每一份学历建立可信凭证{% elif g.user.role == 'edu' %}让证书状态有据可查{% else %}从一份证书，查证一份真实{% endif %}</h2><p>{% if g.user.role == 'uni' %}录入证书内容，生成摘要并提交长安链。签发结果以链上确认为准。{% elif g.user.role == 'edu' %}查看证书内容与链上记录，按监管职责撤销证书并保留原因。{% else %}按证书编号、姓名、学校或学号查询，或提交完整内容核验。{% endif %}</p><a class="button button-light" href="{{ url_for('issue') if g.user.role == 'uni' else url_for('verify') }}">{% if g.user.role == 'uni' %}签发一张证书{% else %}开始内容核验{% endif %}{{ icon('arrow') }}</a></div><div class="banner-emblem" aria-hidden="true">{{ icon('certificate') }}<span>ACADEMIC<br>CREDENTIAL</span></div></div>
+<div class="connection-strip {% if not chain_status.available %}connection-warning{% endif %}"><span class="connection-indicator"></span><strong>{{ '链服务可用' if chain_status.available else '链服务暂不可用' }}</strong><span>{{ chain_status.detail }}</span><span class="connection-caption">本次访问检查</span></div>
+{% if stats is not none %}
+<section class="stats-grid" aria-label="本地业务统计"><div class="stat-card"><span>证书总数</span><strong>{{ stats.total }}</strong><small>应用已保存的证书</small></div><div class="stat-card"><span>已确认签发</span><strong>{{ stats.valid }}</strong><small>本地已确认的有效记录</small></div><div class="stat-card"><span>已确认撤销</span><strong>{{ stats.revoked }}</strong><small>保留原始存证与撤销记录</small></div><div class="stat-card"><span>待确认操作</span><strong>{{ stats.pending }}</strong><small>可前往交易记录核对</small></div></section>
+{% endif %}
+<div class="dashboard-grid"><section class="panel">
+{% if g.user.role == 'query' %}
+<div class="panel-heading"><div><span class="eyebrow">查询入口</span><h2>查找学历证书</h2></div>{{ icon('search') }}</div>
+<div class="record-list">
+  <p class="muted">按编号定位单张证书，或按姓名、学校和学号查询相关证书。</p>
+  {{ certificate_search(dashboard=true) }}
+</div>
+<p class="panel-footnote">查询结果覆盖全部匹配记录，按签发时间排列；查看详情可进行链上核验。</p>
+{% else %}
+<div class="panel-heading"><div><span class="eyebrow">最近记录</span><h2>证书动态</h2></div><a class="text-link" href="{{ url_for('certificates') }}">{{ '查询证书' if g.user.role == 'query' else '查看全部' }}{{ icon('arrow') }}</a></div>
+{% if recent %}<div class="record-list">{% for cert in recent %}<a class="record-item" href="{{ url_for('certificate_detail', cert_id=cert.cert_id) }}"><span class="record-icon">{{ icon('certificate') }}</span><div><strong>{{ cert.student_name }}<span class="record-degree">{{ cert.degree }}</span></strong><small>{{ cert.cert_id }}</small></div>{{ status_badge(cert.local_status) }}{{ icon('arrow', 'record-arrow') }}</a>{% endfor %}</div>{% else %}<div class="empty-state compact">{{ icon('certificate') }}<h3>{{ '从证书编号开始查询' if g.user.role == 'query' else '这里将展示证书记录' }}</h3><p>{{ '输入完整编号，即可查看对应证书及链上核验结果。' if g.user.role == 'query' else '完成首次签发后，可在此快速查看证书详情。' }}</p><a class="text-link" href="{{ url_for('certificates') }}">进入证书查询{{ icon('arrow') }}</a></div>{% endif %}
+
+{% endif %}
+</section><section class="panel workflow-panel"><div class="panel-heading"><div><span class="eyebrow">业务流程</span><h2>证书的可信路径</h2></div>{{ icon('shield') }}</div><ol class="workflow"><li><span>01</span><div><strong>高校签发</strong><p>登记证书内容，将摘要写入链上。</p></div></li><li><span>02</span><div><strong>独立核验</strong><p>重新计算内容摘要，比对链上凭证。</p></div></li><li><span>03</span><div><strong>监管追溯</strong><p>撤销状态保留，原始凭证依然可查。</p></div></li></ol><p class="panel-footnote">列表展示本地记录；证书详情与内容核验会请求链上最新状态。</p></section></div>
+{% endblock %}

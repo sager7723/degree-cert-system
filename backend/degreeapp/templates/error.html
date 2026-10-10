@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}{% block breadcrumb %}访问提示{% endblock %}
+{% block content %}
+<section class="error-page"><span class="error-code">{{ code }}</span><span class="aside-icon">{{ icon('warning') }}</span><h1>{{ title }}</h1><p>{{ message }}</p><a class="button button-primary" href="{{ url_for('dashboard') if g.user else url_for('login') }}">{{ '返回工作台' if g.user else '前往登录' }}{{ icon('arrow') }}</a></section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}操作日志{% endblock %}{% block breadcrumb %}操作日志{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">操作追溯 / AUDIT</span><h1>操作日志</h1><p>查看应用记录的业务操作与处理说明。</p></div><span class="subtle-label">应用日志 · 非链上交易回执</span></section>
+<section class="panel">{% if entries %}<div class="table-wrap"><table><thead><tr><th>时间</th><th>操作账号</th><th>操作</th><th>证书编号</th><th>说明</th></tr></thead><tbody>{% for entry in entries %}<tr><td class="nowrap small">{{ entry.created_at }}</td><td>{{ entry.username|default('—', true) }}</td><td><span class="audit-action">{{ entry.action }}</span></td><td>{% if entry.cert_id %}<span class="mono">{{ entry.cert_id }}</span>{% else %}<span class="muted">—</span>{% endif %}</td><td class="audit-detail">{{ entry.detail }}</td></tr>{% endfor %}</tbody></table></div><p class="table-note">这里展示应用保存的操作记录。业务交易的链上确认结果请查看交易记录。</p>{% else %}<div class="empty-state">{{ icon('list') }}<h2>暂无操作日志</h2><p>应用操作发生后，记录将在这里显示。</p></div>{% endif %}</section>
+{% endblock %}

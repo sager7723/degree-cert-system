@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% from '_search.html' import certificate_search %}
+{% block title %}证书查询{% endblock %}{% block breadcrumb %}证书查询{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">证书查询 / CREDENTIALS</span><h1>证书查询</h1><p>按证书编号、姓名、学校或学号查找本系统已登记的证书。</p></div>{% if g.user.role == 'uni' %}<a class="button button-primary" href="{{ url_for('issue') }}">{{ icon('plus') }}签发证书</a>{% endif %}</section>
+<section class="panel">
+  <div class="certificate-search-toolbar">
+    {{ certificate_search(search, search_field, sort_order, can_browse) }}
+    <div class="search-summary"><span>共 <strong>{{ search_result.total }}</strong> 条记录{% if search_result.total %}，当前第 {{ search_result.start }}–{{ search_result.end }} 条{% endif %}</span>{% if search %}<a class="text-link" href="{{ url_for('certificates', field=search_field, order=sort_order) }}">清空查询</a>{% endif %}</div>
+  </div>
+  {% if certificates %}
+  <div class="table-wrap"><table><thead><tr><th>学生 / 学号</th><th>证书编号</th><th>院校 / 专业</th><th>层次</th><th>签发时间 <small>UTC+8</small></th><th>本地记录状态</th><th class="align-right">操作</th></tr></thead><tbody>
+  {% for cert in certificates %}<tr><td><strong>{{ cert.student_name }}</strong><small class="table-secondary">{{ cert.student_id }}</small></td><td><a class="id-link" href="{{ url_for('certificate_detail', cert_id=cert.cert_id) }}">{{ cert.cert_id }}</a><small class="table-secondary">{{ cert.graduation_date }} 毕业</small></td><td>{{ cert.school_name }}<small class="table-secondary">{{ cert.major }}</small></td><td>{{ cert.degree }}</td><td class="small">{{ cert.issued_time }}</td><td>{{ status_badge(cert.local_status) }}</td><td class="align-right"><a class="text-link nowrap" href="{{ url_for('certificate_detail', cert_id=cert.cert_id) }}">查看详情{{ icon('arrow') }}</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  <p class="table-note">按链上记录的签发交易时间排序；同一秒按证书编号排序，尚无已确认签发时间的记录排在最后。列表状态来自本地记录，详情会实时查询链上状态。</p>
+  {% if search_result.pages > 1 %}
+  <nav class="pagination" aria-label="查询结果分页">
+    {% if search_result.has_prev %}<a class="button button-small button-surface" href="{{ url_for('certificates', q=search, field=search_field, order=sort_order, page=search_result.page - 1) }}">上一页</a>{% endif %}
+    <span>第 {{ search_result.page }} / {{ search_result.pages }} 页 · 每页 {{ search_result.per_page }} 条</span>
+    {% if search_result.has_next %}<a class="button button-small button-surface" href="{{ url_for('certificates', q=search, field=search_field, order=sort_order, page=search_result.page + 1) }}">下一页</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="empty-state">{{ icon('search') }}<h2>{{ '没有找到匹配的证书' if search else ('暂无证书记录' if can_browse else '选择查询类型，查找学历凭证') }}</h2><p>{{ '请核对查询类型和完整内容；证书编号须保持大小写一致。' if search else ('高校签发证书后，记录将在这里显示。' if can_browse else '可以按证书编号、学生姓名、学校名称或学号查询。') }}</p></div>
+  {% endif %}
+</section>
+{% endblock %}

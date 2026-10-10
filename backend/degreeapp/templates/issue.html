@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% from '_forms.html' import certificate_fields %}
+{% block title %}签发证书{% endblock %}{% block breadcrumb %}签发证书{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">高校签发 / ISSUE</span><h1>签发学历证书</h1><p>录入证书信息，提交后将保存证书全文，并向链上写入内容摘要。</p></div><a class="text-link" href="{{ url_for('certificates') }}">返回证书列表{{ icon('arrow') }}</a></section>
+<div class="form-layout"><section class="panel form-panel"><div class="panel-heading"><div><h2>证书信息</h2><p>带 <span class="required">*</span> 的内容为必填项，请按证书原文填写。</p></div><span class="section-number">01</span></div>
+{% if errors.get('_form') %}<div class="notice notice-error" role="alert">{{ icon('warning') }}<div>{{ errors.get('_form') }}</div></div>{% endif %}
+<form method="post" action="{{ url_for('issue') }}" data-submit-label="正在提交签发…"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="request_id" value="{{ request_id }}">{{ certificate_fields(values, errors, optional_id=true) }}<div class="form-footer"><span class="muted small">{{ icon('shield') }}以当前高校身份提交链上交易</span><button class="button button-primary" type="submit">提交签发{{ icon('arrow') }}</button></div></form></section>
+<aside class="form-aside"><section class="aside-card"><span class="aside-icon">{{ icon('chain') }}</span><h2>签发后会发生什么？</h2><ol class="simple-steps"><li>保存完整证书内容。</li><li>计算统一格式的内容摘要。</li><li>提交高校签发交易。</li><li>查询链上结果，确认签发状态。</li></ol></section><section class="aside-card plain"><h3>一张证书，一个编号</h3><p>同一学生可以拥有多张证书，每张证书使用独立编号。已存证编号不能覆盖，内容有误时应按流程撤销后重新签发。</p></section><section class="aside-card plain"><h3>等待确认时</h3><p>若页面提示待确认，请在交易记录中核对原交易，避免重复签发。</p></section></aside></div>
+{% endblock %}

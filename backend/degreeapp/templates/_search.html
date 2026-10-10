@@ -1,0 +1,29 @@
+{% macro certificate_search(search='', field='cert_id', order='asc', can_browse=false, dashboard=false) -%}
+{% set prefix = 'dashboard-' if dashboard else '' %}
+<form method="get" action="{{ url_for('certificates') }}" class="certificate-search {% if dashboard %}certificate-search-dashboard{% endif %}">
+  <div class="search-controls">
+    <div class="field">
+      <label for="{{ prefix }}search-field">查询类型</label>
+      <select id="{{ prefix }}search-field" name="field">
+        {% if can_browse %}<option value="all" {% if field == 'all' %}selected{% endif %}>综合关键词</option>{% endif %}
+        {% for value, label in [('cert_id','证书编号'),('student_name','学生姓名'),('school_name','学校名称'),('student_id','学号')] %}
+        <option value="{{ value }}" {% if field == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="{{ prefix }}search">查询内容</label>
+      <input id="{{ prefix }}search" type="search" name="q" value="{{ search }}" maxlength="100" placeholder="输入对应的完整编号或名称" {% if not can_browse %}required{% endif %} autocomplete="off" spellcheck="false" aria-describedby="{{ prefix }}search-help">
+    </div>
+    <div class="field">
+      <label for="{{ prefix }}search-order">签发时间排序</label>
+      <select id="{{ prefix }}search-order" name="order">
+        <option value="asc" {% if order == 'asc' %}selected{% endif %}>从早到晚</option>
+        <option value="desc" {% if order == 'desc' %}selected{% endif %}>从晚到早</option>
+      </select>
+    </div>
+    <button class="button button-primary" type="submit">{{ icon('search') if icon is defined else '' }}{{ '查询证书' if dashboard else '查询' }}</button>
+  </div>
+  <p id="{{ prefix }}search-help" class="field-hint">编号、姓名、学校和学号均按完整内容匹配；同名学生、同校证书会全部列出，结果可翻页。{% if can_browse %}“综合关键词”支持部分内容搜索。{% endif %}</p>
+</form>
+{%- endmacro %}

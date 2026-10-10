@@ -1,0 +1,26 @@
+# Stage 3 only: read an existing chain using its existing client identity.
+# Private keys remain in the existing ChainMaker directory; use sudo for this probe.
+chain_client:
+  chain_id: chain1
+  org_id: wx-org1.chainmaker.org
+  user_key_file_path: /home/wsc/chainmaker-go/tools/cmc/testdata/crypto-config/wx-org1.chainmaker.org/user/client1/client1.tls.key
+  user_crt_file_path: /home/wsc/chainmaker-go/tools/cmc/testdata/crypto-config/wx-org1.chainmaker.org/user/client1/client1.tls.crt
+  user_sign_key_file_path: /home/wsc/chainmaker-go/tools/cmc/testdata/crypto-config/wx-org1.chainmaker.org/user/client1/client1.sign.key
+  user_sign_crt_file_path: /home/wsc/chainmaker-go/tools/cmc/testdata/crypto-config/wx-org1.chainmaker.org/user/client1/client1.sign.crt
+  alias: ""
+  node_only_async: false
+  retry_limit: 3
+  retry_interval: 500
+  optimize_detection: -1
+  nodes:
+    - node_addr: 127.0.0.1:12301
+      conn_cnt: 1
+      enable_tls: true
+      trust_root_paths:
+        - /home/wsc/chainmaker-go/tools/cmc/testdata/crypto-config/wx-org1.chainmaker.org/ca
+      tls_host_name: chainmaker.org
+  rpc_client:
+    max_receive_message_size: 100
+    max_send_message_size: 100
+    send_tx_timeout: 20
+    get_tx_timeout: 20

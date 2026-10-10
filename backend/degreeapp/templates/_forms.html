@@ -1,0 +1,18 @@
+{% macro field(name, label, values, errors, type='text', placeholder='', hint='', required=true, maxlength=120) -%}
+<div class="field {% if errors.get(name) %}field-invalid{% endif %}">
+  <label for="{{ name }}">{{ label }}{% if required %}<span class="required" aria-hidden="true">*</span>{% endif %}</label>
+  <input id="{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ values.get(name, '') }}" placeholder="{{ placeholder }}" maxlength="{{ maxlength }}" {% if required %}required{% endif %} {% if errors.get(name) %}aria-invalid="true" aria-describedby="{{ name }}-error"{% elif hint %}aria-describedby="{{ name }}-hint"{% endif %} {% if name == 'cert_id' %}spellcheck="false" autocomplete="off"{% endif %}>
+  {% if errors.get(name) %}<p class="field-error" id="{{ name }}-error">{{ errors.get(name) }}</p>{% elif hint %}<p class="field-hint" id="{{ name }}-hint">{{ hint }}</p>{% endif %}
+</div>
+{%- endmacro %}
+{% macro certificate_fields(values, errors, optional_id=false) -%}
+<div class="form-grid">
+  {{ field('cert_id', '证书编号', values, errors, placeholder='例如 DEGREE_2026_001', hint='留空将自动生成编号；仅支持英文字母、数字、下划线与连字符。' if optional_id else '填写待核验证书的完整编号。', required=not optional_id, maxlength=64) }}
+  {{ field('student_id', '学号', values, errors, placeholder='例如 2022001001', maxlength=64) }}
+  {{ field('student_name', '学生姓名', values, errors, placeholder='填写证书所载姓名', maxlength=50) }}
+  {{ field('school_name', '毕业院校', values, errors, placeholder='填写院校完整名称', maxlength=100) }}
+  {{ field('major', '所学专业', values, errors, placeholder='例如 计算机科学与技术', maxlength=100) }}
+  <div class="field {% if errors.get('degree') %}field-invalid{% endif %}"><label for="degree">学历 / 学位层次<span class="required" aria-hidden="true">*</span></label><select id="degree" name="degree" required {% if errors.get('degree') %}aria-invalid="true" aria-describedby="degree-error"{% endif %}>{% for degree in ['专科', '学士', '硕士', '博士'] %}<option value="{{ degree }}" {% if values.get('degree', '学士') == degree %}selected{% endif %}>{{ degree }}</option>{% endfor %}</select>{% if errors.get('degree') %}<p class="field-error" id="degree-error">{{ errors.get('degree') }}</p>{% endif %}</div>
+  {{ field('graduation_date', '毕业日期', values, errors, type='date', maxlength=10) }}
+</div>
+{%- endmacro %}

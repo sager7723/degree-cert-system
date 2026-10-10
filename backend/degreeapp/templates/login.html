@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}登录{% endblock %}
+{% block content %}
+<div class="login-layout">
+  <section class="login-story">
+    <a class="brand" href="{{ url_for('login') }}"><span class="brand-symbol">{{ icon('certificate') }}</span><span>学链凭证<small>学历证书存证系统</small></span></a>
+    <div class="login-story-main"><span class="eyebrow light">每一份学业，都有可信凭证</span><h1>让学历可验证，<br>让信任有依据。</h1><p>以长安链记录证书摘要与状态，连接高校签发、内容核验和教育监管。</p>
+      <div class="credential-art" aria-hidden="true"><div class="art-topline"><span>ACADEMIC CREDENTIAL</span><span>链上存证</span></div><div class="art-heading">学历证书</div><div class="art-line"></div><div class="art-line art-line-short"></div><div class="art-bottom"><span class="art-seal">{{ icon('shield') }}</span><div><strong>签发 · 核验 · 追溯</strong><small>以密码学摘要关联证书内容</small></div></div></div>
+    </div>
+    <div class="login-story-footer"><span class="tiny-dot"></span>基于 ChainMaker 联盟链</div>
+  </section>
+  <section class="login-panel" aria-labelledby="login-title"><div class="login-panel-inner"><span class="eyebrow">欢迎回来</span><h2 id="login-title">登录工作空间</h2><p class="muted">使用已分配的账号，进入对应机构的业务空间。</p>
+    {% if error %}<div class="notice notice-error" role="alert">{{ icon('warning') }}<div>{{ error }}</div></div>{% endif %}
+    <form method="post" action="{{ url_for('login') }}" class="login-form" data-submit-label="正在登录…"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+      <div class="field"><label for="username">账号</label><input id="username" name="username" value="{{ username|default('') }}" autocomplete="username" required autofocus maxlength="64" placeholder="请输入账号"></div>
+      <div class="field"><label for="password">密码</label><input id="password" name="password" type="password" autocomplete="current-password" required placeholder="请输入密码"></div>
+      <button type="submit" class="button button-primary button-full">登录系统{{ icon('arrow') }}</button>
+    </form>
+    <div class="login-footnote">{{ icon('shield') }}<p>账号权限由系统分配。高校负责签发，教育主管部门负责撤销，查询用户负责查证与核验。</p></div>
+  </div></section>
+</div>
+{% endblock %}
